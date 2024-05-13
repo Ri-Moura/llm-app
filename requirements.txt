@@ -1,0 +1,9 @@
+beautifulsoup4==4.12.3
+fastapi==0.111.0
+pdfplumber==0.11.0
+pinecone==4.0.0
+pydantic==2.7.1
+Requests==2.31.0
+sseclient==0.0.27
+openai
+pinecone-client
