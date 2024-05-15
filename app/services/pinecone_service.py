@@ -1,4 +1,5 @@
 import os
+from typing import List
 from pinecone import Pinecone, ServerlessSpec
 from app.services.openai_service import get_embedding
 
@@ -7,10 +8,16 @@ pc = Pinecone(api_key=PINECONE_API_KEY)
 
 EMBEDDING_DIMENSION = 1536
 
-def embed_chunks_and_upload_to_pinecone(chunks, index_name):
+def embed_chunks_and_upload_to_pinecone(chunks: List[str], index_name: str) -> None:
+    """
+    Embed text chunks using OpenAI and upload them to Pinecone.
+
+    Args:
+        chunks (List[str]): The list of text chunks to be embedded.
+        index_name (str): The name of the Pinecone index.
+    """
     if index_name in pc.list_indexes().names():
         print("\nIndex already exists. Will not create again!")
-        pass
     else:
         print("\nIndex not exists")
         print("\nCreating a new index: ", index_name)
@@ -35,7 +42,17 @@ def embed_chunks_and_upload_to_pinecone(chunks, index_name):
 
         print(f"\nUploaded {len(chunks)} chunks to Pinecone index '{index_name}'.")
 
-def get_most_similar_chunks_for_query(query, index_name):
+def get_most_similar_chunks_for_query(query: str, index_name: str) -> List[str]:
+    """
+    Get the most similar text chunks for a given query from Pinecone.
+
+    Args:
+        query (str): The query to find similar chunks for.
+        index_name (str): The name of the Pinecone index.
+
+    Returns:
+        List[str]: A list of the most similar text chunks.
+    """
     print("\nEmbedding query using OpenAI ...")
     question_embedding = get_embedding(query)
 
@@ -49,7 +66,13 @@ def get_most_similar_chunks_for_query(query, index_name):
 
     return context_chunks
 
-def delete_index(index_name):
+def delete_index(index_name: str) -> None:
+    """
+    Delete a specified index from Pinecone.
+
+    Args:
+        index_name (str): The name of the index to be deleted.
+    """
     if index_name in pc.list_indexes().names():
         print("\nDeleting index ...")
         pc.delete_index(name=index_name)
