@@ -3,30 +3,20 @@ import requests
 import pdfplumber
 from io import BytesIO
 from typing import Dict, Optional
-from pydantic import BaseModel, HttpUrl
 from fastapi.responses import JSONResponse
 from fastapi import FastAPI, HTTPException, UploadFile, File, Form
-
 from app.utils.helper_functions import chunk_text, build_prompt
 from app.services import openai_service, pinecone_service, scraping_service
+from app.models import QueryRequest, EmbedStoreRequest, BrandVoiceConfig
 
 app = FastAPI()
 
-class QueryRequest(BaseModel):
-    question: str
-    index_name: str
-
-class EmbedStoreRequest(BaseModel):
-    url: str
-    index_name: str
-
-class BrandVoiceConfig(BaseModel):
-    url: Optional[HttpUrl] = None
-    file: Optional[UploadFile] = None
-    index_name: str
-
 @app.post('/generate-content/')
-async def generate_content(index_name: str = Form(...), url: Optional[str] = Form(None), file: Optional[UploadFile] = File(None)):
+async def generate_content(
+    index_name: str = Form(...), 
+    url: Optional[str] = Form(None), 
+    file: Optional[UploadFile] = File(None)
+) -> Dict[str, str]:
     """
     Generate content based on the brand voice extracted from the provided PDF URL or file.
 
@@ -75,7 +65,7 @@ async def generate_content(index_name: str = Form(...), url: Optional[str] = For
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post('/handle-query/')
-async def handle_query(query: QueryRequest):
+async def handle_query(query: QueryRequest) -> Dict[str, str]:
     """
     Handle user queries related to the brand voice.
 
@@ -96,7 +86,7 @@ async def handle_query(query: QueryRequest):
         raise HTTPException(status_code=400, detail=str(e))
 
 @app.post('/embed-and-store/')
-async def embed_and_store(request: EmbedStoreRequest):
+async def embed_and_store(request: EmbedStoreRequest) -> JSONResponse:
     """
     Embed and store text chunks from a provided URL into Pinecone.
 
@@ -124,7 +114,7 @@ async def embed_and_store(request: EmbedStoreRequest):
     return JSONResponse({"message": "Chunks embedded and stored successfully"})
 
 @app.post('/delete-index/')
-async def delete_index(index_name: str):
+async def delete_index(index_name: str) -> JSONResponse:
     """
     Delete a specified index from Pinecone.
 
