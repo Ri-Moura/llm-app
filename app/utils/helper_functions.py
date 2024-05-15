@@ -1,37 +1,50 @@
-# Utility functions like chunk_text, build_prompt, etc.
+from typing import List, Dict
 
 PROMPT_LIMIT = 3750
 
-def chunk_text(text, chunk_size=200):
-    # Split the text by sentences to avoid breaking in the middle of a sentence
+def chunk_text(text: str, chunk_size: int = 200) -> List[str]:
+    """
+    Split text into chunks of a specified size.
+
+    Args:
+        text (str): The text to be chunked.
+        chunk_size (int): The maximum size of each chunk.
+
+    Returns:
+        List[str]: A list of text chunks.
+    """
     sentences = text.split('. ')
     chunks = []
     current_chunk = ""
     for sentence in sentences:
-        # Check if adding the next sentence exceeds the chunk size
         if len(current_chunk) + len(sentence) <= chunk_size:
             current_chunk += sentence + '. '
         else:
-            # If the chunk reaches the desired size, add it to the chunks list
             chunks.append(current_chunk)
             current_chunk = sentence + '. '
-    # Add the last chunk if it's not empty
     if current_chunk:
         chunks.append(current_chunk)
 
     return chunks
 
-def build_prompt(query, context_chunks):
+def build_prompt(query: str, context_chunks: List[str]) -> str:
+    """
+    Build a prompt for the language model using the query and context chunks.
+
+    Args:
+        query (str): The query to be answered.
+        context_chunks (List[str]): The context chunks to be included in the prompt.
+
+    Returns:
+        str: The constructed prompt.
+    """
     print(f"Number of context chunks received: {len(context_chunks)}")
     prompt_start = (
         "Answer the question based on the context below. If you don't know the answer based on the context provided below, just respond with 'I don't know' instead of making up an answer. Don't start your response with the word 'Answer:'"
         "Context:\n"
     )
-    prompt_end = (
-        f"\n\nQuestion: {query}\nAnswer:"
-    )
+    prompt_end = f"\n\nQuestion: {query}\nAnswer:"
     prompt = ""
-    # append contexts until hitting limit
     for i in range(1, len(context_chunks)):
         if len("\n\n---\n\n".join(context_chunks[:i])) >= PROMPT_LIMIT:
             prompt = (
@@ -54,17 +67,25 @@ def build_prompt(query, context_chunks):
     
     return prompt   
 
-def construct_messages_list(chat_history, prompt):
+def construct_messages_list(chat_history: List[Dict[str, str]], prompt: str) -> List[Dict[str, str]]:
+    """
+    Construct a list of messages for the language model based on chat history and the new prompt.
+
+    Args:
+        chat_history (List[Dict[str, str]]): The history of the chat.
+        prompt (str): The new prompt to be added to the messages.
+
+    Returns:
+        List[Dict[str, str]]: A list of messages for the language model.
+    """
     messages = [{"role": "system", "content": "You are a helpful assistant."}]
     
-    # Populate the messages array with the current chat history
     for message in chat_history:
         if message['isBot']:
             messages.append({"role": "system", "content": message["text"]})
         else:
             messages.append({"role": "user", "content": message["text"]})
 
-    # Replace last message with the full prompt
     messages[-1]["content"] = prompt    
     
     return messages
