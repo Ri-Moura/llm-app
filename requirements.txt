@@ -5,5 +5,5 @@ pinecone==4.0.0
 pydantic==2.7.1
 Requests==2.31.0
 sseclient==0.0.27
-openai
-pinecone-client
+openai==1.28.0
+pinecone-client==4.0.0
