@@ -24,19 +24,25 @@ Develop a RAG-LLM based system to:
     git clone https://github.com/Ri-Moura/llm-app.git
     cd llm-app
     ```
-2. Build the Docker image:
+2. Install the requirements:
     ```bash
-    docker build -t llm-app .
-    ```
-3. Run the Docker container:
-    ```bash
-    docker run -d -p 8000:8000 llm-app
+    pip install -r requirements.txt
     ```
 
 ## Usage
-1. Access the application:
-    Open a web browser and navigate to `http://localhost:8000`.
-2. Endpoints:
+1. First Option:
+    Using curl command:
+       ```bash
+        curl -X POST http://54.172.243.231:8000/generate-content/ \
+        -F "index_name=pinecone_index_name" \
+        -F "url=your_pdf_url"
+        ```
+2. Second Option:
+    Run the Streamlit app:
+        ```bash
+        streamlit run app/api/app.py
+        ```
+3. Endpoints:
     - **/generate-content/**: Extracts brand voice from a PDF URL or file.
     - **/handle-query/**: Handles user queries related to the brand voice.
     - **/embed-and-store/**: Embeds and stores text chunks from a URL.
@@ -53,6 +59,7 @@ Develop a RAG-LLM based system to:
 - Python 3.x
 - OpenAI API Key
 - Pinecone API Key
+- Streamlit
 
 ## Contributing
 Contributions are welcome! Please follow these steps:
