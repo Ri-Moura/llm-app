@@ -32,16 +32,16 @@ Develop a RAG-LLM based system to:
 ## Usage
 1. First Option:
     Using curl command:
-       ```bash
-        curl -X POST http://54.172.243.231:8000/generate-content/ \
-        -F "index_name=pinecone_index_name" \
-        -F "url=your_pdf_url"
-        ```
+    ```bash
+    curl -X POST http://54.172.243.231:8000/generate-content/ \
+    -F "index_name=pinecone_index_name" \
+    -F "url=your_pdf_url"
+    ```
 2. Second Option:
     Run the Streamlit app:
-        ```bash
-        streamlit run app/api/app.py
-        ```
+   ```bash
+   streamlit run app/api/app.py
+   ```
 3. Endpoints:
     - **/generate-content/**: Extracts brand voice from a PDF URL or file.
     - **/handle-query/**: Handles user queries related to the brand voice.
